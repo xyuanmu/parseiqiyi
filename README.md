@@ -1,4 +1,4 @@
-# parseIQiYi
+# ParseIQiYi
 一款简单的小工具，使用PHP环境解析爱奇艺视频的下载地址，源码提取自 [parseVideo](https://github.com/keygle/parseVideo)。至于其他网站视频，用[硕鼠](http://www.flvcd.com/)就可以得到完美的解决方案，爱奇艺的视频不让解析，咱就偏偏要下载，你咬我啊！！！
 
 ## 使用方法：

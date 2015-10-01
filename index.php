@@ -10,7 +10,7 @@ body{color:#333;font-family:"segoe ui",Arial,sans-serif}
 h1{text-align:center;}
 form{text-align:center;margin:40px 0}
 #url{width:100%;height:48px;font-size:18px;color:#888;background:#f2f2f2;border:0;padding:0 10px;outline:0;  text-align:center;transition:color,background .2s ease-out;box-sizing:border-box}
-#url:focus{color:#000;background:#C7EAD8}
+#url:focus{color:#000;background:#C7EAEA}
 pre{font-family:monaco,consolas;font-size:13px;background:#f8f8f8;padding:10px;border:1px solid #e3e3e3;overflow-x:auto;}
 @media screen and (max-width:1080px){
 #url{font-size:16px}

@@ -47,9 +47,16 @@ function debug($url,$bid){
 }
 
 ###### output video urls ######
-$url = isset($_GET['url']) && $_GET['url'] != '' ? $_GET['url'] : 'http://www.iqiyi.com/v_19rroonq48.html';
 $bid = isset($_GET['bid']) && $_GET['bid'] != '' ? $_GET['bid'] : 'all';
-debug($url,$bid);
+if (isset($_GET['url'])){
+	if ($_GET['url'] != ''){
+		$url = $_GET['url'];
+		debug($url,$bid);
+	} else if ($_GET['url'] == ''){
+		$url = 'http://www.iqiyi.com/v_19rroonq48.html';
+		debug($url,$bid);
+	}
+}
 ?>
 	</div>
 </body>

@@ -12,7 +12,7 @@ body{color:#333;font-family:"segoe ui",Arial,sans-serif}#page{width:90%;margin:4
 <body>
 	<div id="page">
 		<h1>解析爱奇艺视频地址</h1>
-		<form action="test.php" method="get">
+		<form action="index.php" method="get">
 			<input id="url" name="url" type="text" placeholder="请在此输入视频地址"<?php echo isset($_GET['url']) && $_GET['url'] != '' ? ' value="' . $_GET['url'] . '"' : ''?>>
 			<label class="type"><input type="radio" value="fluent" name="bid" <?php echo isset($_GET['bid']) && $_GET['bid'] == "fluent" ? ' checked="checked"' : ''?>/>极速</label>
 			<label class="type"><input type="radio" value="normal" name="bid" <?php echo isset($_GET['bid']) && $_GET['bid'] == 'normal' ? ' checked="checked"' : ''?>/>流畅</label>

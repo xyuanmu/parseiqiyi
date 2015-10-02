@@ -30,7 +30,7 @@ require "iqiyi.class.php";
 
 function debug($url){
 	$result = Iqiyi::parse($url);
-	echo "<pre>\n<span style=color:#E47;font-weight:bold>因为地址有时间限制，请尽快下载，若失效刷新本页面！</span> <br>";
+	echo "<pre>\n<span style=color:#E47;font-weight:bold>下载链接10分钟内有效，请尽快下载，若失效刷新本页面！</span> <br>";
 	print_r($result);
 	echo '</pre>';
 }

@@ -14,47 +14,45 @@ body{color:#333;font-family:"segoe ui",Arial,sans-serif}#page{width:90%;margin:4
 		<h1>解析爱奇艺视频地址</h1>
 		<form action="index.php" method="get">
 			<input id="url" name="url" type="text" placeholder="请在此输入视频地址"<?php echo isset($_GET['url']) && $_GET['url'] != '' ? ' value="' . $_GET['url'] . '"' : ''?>>
-			<label class="type"><input type="radio" value="fluent" name="bid" <?php echo isset($_GET['bid']) && $_GET['bid'] == "fluent" ? ' checked="checked"' : ''?>/>极速</label>
-			<label class="type"><input type="radio" value="normal" name="bid" <?php echo isset($_GET['bid']) && $_GET['bid'] == 'normal' ? ' checked="checked"' : ''?>/>流畅</label>
-			<label class="type"><input type="radio" value="high" name="bid" <?php echo isset($_GET['bid']) && $_GET['bid'] == 'high' ? ' checked="checked"' : ''?>/>高清</label>
-			<label class="type"><input type="radio" value="super" name="bid" <?php echo isset($_GET['bid']) && $_GET['bid'] == 'super' ? ' checked="checked"' : ''?>/>720P</label>
-			<label class="type"><input type="radio" value="all" name="bid" <?php echo isset($_GET['bid']) && $_GET['bid'] == 'all' || !isset($_GET['bid']) ? ' checked="checked"' : ''?>/>全部</label>
+			<label class="type"><input type="radio" value="fluent" name="type" <?php echo isset($_GET['type']) && $_GET['type'] == "fluent" ? ' checked="checked"' : ''?>/>极速</label>
+			<label class="type"><input type="radio" value="normal" name="type" <?php echo isset($_GET['type']) && $_GET['type'] == 'normal' ? ' checked="checked"' : ''?>/>流畅</label>
+			<label class="type"><input type="radio" value="high" name="type" <?php echo isset($_GET['type']) && $_GET['type'] == 'high' ? ' checked="checked"' : ''?>/>高清</label>
+			<label class="type"><input type="radio" value="super" name="type" <?php echo isset($_GET['type']) && $_GET['type'] == 'super' ? ' checked="checked"' : ''?>/>720P</label>
+			<label class="type"><input type="radio" value="all" name="type" <?php echo isset($_GET['type']) && $_GET['type'] == 'all' || !isset($_GET['type']) ? ' checked="checked"' : ''?>/>全部</label>
 			<label class="type"><input type="submit" id="submit" value="解析"/></label>
 		</form>
 <?php
 require "iqiyi.class.php";
 
-function debug($url,$bid){
-	$result = Iqiyi::parse($url);
+function debug($url,$type){
+	$result = Iqiyi::parse($url,$type);
 	echo "<pre>\n<span style=color:#E47;font-weight:bold>下载链接10分钟内有效，请尽快下载，若失效刷新本页面！</span> <br>";
-	if ($bid == 'all'){
+	if ($type == 'all'){
 		print_r($result);
 	} else {
 		echo "\n标题：" . $result['title'] . "\n";
 		echo "时长：" . $result['seconds'] . "秒\n";
 		echo "<ol>";
-		$val = array();
-		if ($bid == 'fluent') $value = $result['极速'];
-		if ($bid == 'normal') $value = $result['流畅'];
-		if ($bid == 'high') $value = $result['高清'];
-		if ($bid == 'super') $value = $result['720P'];
-		foreach ($value as $val){
-			echo "<li>" .$val. "</li>";
+		$value = array_slice($result,2,1);
+		foreach ($value as $key => $vals){
+			foreach ($vals as $val){
+				echo "<li>" .$val. "</li>";
+			}
 		}
 		echo "</ol>";
 	}
-	echo "</pre>";
+	echo "</pre>\n";
 }
 
 ###### output video urls ######
-$bid = isset($_GET['bid']) && $_GET['bid'] != '' ? $_GET['bid'] : 'all';
+$type = isset($_GET['type']) && $_GET['type'] != '' ? $_GET['type'] : 'all';
 if (isset($_GET['url'])){
 	if ($_GET['url'] != ''){
 		$url = $_GET['url'];
-		debug($url,$bid);
+		debug($url,$type);
 	} else if ($_GET['url'] == ''){
 		$url = 'http://www.iqiyi.com/v_19rroonq48.html';
-		debug($url,$bid);
+		debug($url,$type);
 	}
 }
 ?>

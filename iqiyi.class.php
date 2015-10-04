@@ -99,7 +99,7 @@ class Iqiyi {
 		$server_time = $time_datas['t'];
 
 		//视频信息
-		$data['title'] = $video_datas['data']['vi']['shortTitle'];
+		$data['title'] = $video_datas['data']['vi']['vn'];
 		$data['seconds'] = $vs[0]['duration'];
 		$vs[0]['type'] = $type;
 

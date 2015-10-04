@@ -2,6 +2,7 @@
 class Iqiyi {
 
 	const USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.69 Safari/537.36";
+	const PROXY = "http://203.195.160.14:80"; //代理ip 端口
 	static private $deadpara = 832;
 	static private $enc_key  = "a6f2a01ab9ad4510be0449fab528b82c";
 
@@ -25,7 +26,7 @@ class Iqiyi {
 		if (!$url) return;
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_REFERER, "http://www.baidu.com");
-		curl_setopt($ch, CURLOPT_PROXY, "http://203.195.160.14:80"); //代理ip 端口
+		curl_setopt($ch, CURLOPT_PROXY, self::PROXY);
 		curl_setopt($ch, CURLOPT_USERAGENT, self::USER_AGENT);
 		ob_start();
 		curl_exec($ch);
@@ -158,6 +159,7 @@ class Iqiyi {
 		foreach ($urls as $url){
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_PROXY, self::PROXY);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_HEADER, 0);

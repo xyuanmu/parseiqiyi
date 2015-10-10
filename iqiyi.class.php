@@ -3,8 +3,9 @@ class Iqiyi {
 
 	const USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.69 Safari/537.36";
 	const PROXY = "http://203.195.160.14:80"; //代理ip 端口
+	//const PROXY = "";
 	static private $deadpara = 832;
-	static private $enc_key  = "a6f2a01ab9ad4510be0449fab528b82c";
+	static private $enc_key  = "97596c0abee04ab49ba25564161ad225";
 
 	public static function parse($url,$type){
 		$html = static::_cget($url);
@@ -26,7 +27,7 @@ class Iqiyi {
 		if (!$url) return;
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_REFERER, "http://www.baidu.com");
-		curl_setopt($ch, CURLOPT_PROXY, self::PROXY);
+		if (self::PROXY!='') curl_setopt($ch, CURLOPT_PROXY, self::PROXY);
 		curl_setopt($ch, CURLOPT_USERAGENT, self::USER_AGENT);
 		ob_start();
 		curl_exec($ch);
@@ -37,9 +38,8 @@ class Iqiyi {
 			return false;
 		}
 		curl_close($ch);
-		if (!is_string($html) || !strlen($html)){
+		if (!is_string($html) || !strlen($html))
 			return false;
-		}
 		return $html;
 	}
 
@@ -92,6 +92,9 @@ class Iqiyi {
 		$api_url = $api_url."&tvId=".$tvid."&vid=".$vid."&vinfo=1&tm=".self::$deadpara."&enc=".md5(self::$enc_key.self::$deadpara.$tvid);
 
 		$video_datas = json_decode(static::_cget($api_url),true);
+		if($video_datas['code']=='A000001')
+			return false;
+
 		$vs = $video_datas['data']['vp']['tkl'][0]['vs'];    //.data.vp.tkl[0].vs
 
 		$time_url = "http://data.video.qiyi.com/t";
@@ -110,7 +113,6 @@ class Iqiyi {
 				$type = $vs[0]['type'];
 
 				$this_link = $v['l'];
-
 				if($val['bid'] ==  4 || $val['bid'] ==  5 || $val['bid'] ==  10){
 					$this_link = static::getVrsEncodeCode($this_link);
 				}
@@ -122,12 +124,12 @@ class Iqiyi {
 
 				$final_url = "http://data.video.qiyi.com/".$this_key."/videos".$this_link;
 
-				if($val['bid'] ==  96 && ($type=='all' || $type=='fluent'))$urls_data['fluent'][] = $final_url;
-				if($val['bid'] ==  1 && ($type=='all' || $type=='normal'))$urls_data['normal'][] = $final_url;
-				if($val['bid'] ==  2 && ($type=='all' || $type=='high'))$urls_data['high'][] = $final_url;
-				if($val['bid'] ==  4 && ($type=='all' || $type=='super'))$urls_data['SUPER_HIGH'][] = $final_url;
-				if($val['bid'] ==  5 && $type=='all')$urls_data['FULL_HD'][] = $final_url;
-				if($val['bid'] ==  10 && $type=='all')$urls_data['FOUR_K'][] = $final_url;
+				if($val['bid'] ==  96 && ($type=='all' || $type=='fluent')) $urls_data['fluent'][] = $final_url;
+				if($val['bid'] ==  1 && ($type=='all' || $type=='normal')) $urls_data['normal'][] = $final_url;
+				if($val['bid'] ==  2 && ($type=='all' || $type=='high')) $urls_data['high'][] = $final_url;
+				if($val['bid'] ==  4 && ($type=='all' || $type=='super')) $urls_data['SUPER_HIGH'][] = $final_url;
+				if($val['bid'] ==  5 && $type=='all') $urls_data['FULL_HD'][] = $final_url;
+				if($val['bid'] ==  10 && $type=='all') $urls_data['FOUR_K'][] = $final_url;
 			}
 		}
 
@@ -155,11 +157,11 @@ class Iqiyi {
 	//rolling_curl curl并发
 	private static function rolling_curl($urls){
 		$queue = curl_multi_init();
-		$map = array();
+		$map = $responses = array();
 		foreach ($urls as $url){
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_PROXY, self::PROXY);
+			if (self::PROXY!='') curl_setopt($ch, CURLOPT_PROXY, self::PROXY);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -168,7 +170,6 @@ class Iqiyi {
 			curl_multi_add_handle($queue, $ch);
 			$map[(string)$ch] = $url;
 		}
-		$responses = array();
 		do {
 			while (($code = curl_multi_exec($queue, $active)) == CURLM_CALL_MULTI_PERFORM);
 			if ($code != CURLM_OK){
@@ -185,14 +186,13 @@ class Iqiyi {
 			}
 		} while ($active);
 		curl_multi_close($queue);
-
 		return $responses;
 	}
 
 	//callback_match 回调获取视频的地址
 	private static function callback_match($data){
 		preg_match('#"l":"([^"]+)&src=.*?"#i',$data,$matchs);
-		$url = $matchs[1];
-		return $url;
+		if($matchs) $data = $matchs[1];
+		return $data;
 	}
 }

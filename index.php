@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <link rel="shortcut icon" href="http://www.iqiyi.com/favicon.ico" type="image/x-icon"/>
 <style>
-body{color:#333;font-family:"segoe ui",Arial,sans-serif}#page{width:90%;margin:40px auto 0;padding:20px 0}h1{text-align:center}form{text-align:center;margin:40px 0}#url{width:100%;height:48px;font-size:18px;color:#888;background:#f2f2f2;border:0;padding:0 10px;outline:0;text-align:center;box-sizing:border-box}#url,#submit{transition:color,background .2s ease-out}#url:focus{color:#000;background:#C7EAEA}#submit{margin:0;padding:8px 18px;font-size:16px;cursor:pointer;color:#fff;background:#32B1BD;border:0;border-radius:3px}#submit:hover{background:#379AA3}#submit:active{background:#238993;padding:9px 18px 7px}.type{margin:15px;display:inline-block;vertical-align:middle;cursor:pointer}pre{font-family:monaco,consolas;font-size:13px;background:#f8f8f8;padding:10px;border:1px solid #e3e3e3;overflow-x:auto}@media screen and (max-width:1080px){#url{font-size:16px}pre{font-size:12px}}
+body{color:#333;font-family:"segoe ui",Arial,sans-serif}#page{width:90%;margin:40px auto 0;padding:20px 0}h1{text-align:center}form{text-align:center;margin:40px 0}#url{width:100%;height:48px;font-size:18px;color:#888;background:#f2f2f2;border:0;padding:0 10px;outline:0;text-align:center;box-sizing:border-box}#url,#submit{transition:color,background .2s ease-out}#url:focus{color:#000;background:#C7EAEA}#submit{margin:0;padding:8px 18px;font-size:16px;cursor:pointer;color:#fff;background:#32B1BD;border:0;border-radius:3px}#submit:hover{background:#379AA3}#submit:active{background:#238993;padding:9px 18px 7px}.type{margin:15px;display:inline-block;vertical-align:middle;cursor:pointer}pre{font-family:monaco,consolas;font-size:13px;background:#f8f8f8;padding:10px;border:1px solid #e3e3e3;overflow-x:auto}span{color:#E47;font-weight:bold}@media screen and (max-width:1080px){#url{font-size:16px}pre{font-size:12px}}
 </style>
 </head>
 
@@ -26,22 +26,27 @@ require "iqiyi.class.php";
 
 function debug($url,$type){
 	$result = Iqiyi::parse($url,$type);
-	echo "<pre>\n<span style=color:#E47;font-weight:bold>下载链接10分钟内有效，请尽快下载，若失效刷新本页面！</span> <br>";
-	if ($type == 'all'){
-		print_r($result);
-	} else {
-		echo "\n标题：" . $result['title'] . "\n";
-		echo "时长：" . $result['seconds'] . "秒\n";
-		echo "<ol>";
-		$value = array_slice($result,2,1);
-		foreach ($value as $key => $vals){
-			foreach ($vals as $val){
-				echo "<li>" .$val. "</li>";
+	echo "<pre>\n<span>下载链接10分钟内有效，请尽快下载，若失效刷新本页面！</span> <br>";
+	if ($result){
+		if ($type == 'all'){
+			print_r($result);
+		} else {
+			echo "\n标题：" . $result['title'] . "\n";
+			echo "时长：" . $result['seconds'] . "秒\n";
+			echo "<ol>";
+			$value = array_slice($result,2,1);
+			foreach ($value as $key => $vals){
+				foreach ($vals as $val){
+					echo "<li>" .$val. "</li>";
+				}
 			}
+			echo "</ol>";
 		}
-		echo "</ol>";
 	}
-	echo "</pre>\n";
+	else {
+		echo "\n<span>获取失败！</span>";
+	}
+		echo "</pre>\n";
 }
 
 ###### output video urls ######

@@ -5,7 +5,7 @@ class Iqiyi {
 	const PROXY = "http://203.195.160.14:80"; //代理ip 端口
 	//const PROXY = "";
 	static private $deadpara = 832;
-	static private $enc_key  = "2c76de15dcb44bd28ff0927d50d31620";
+	static private $enc_key  = "6967d2088d8843eea0ee38ad1a6f9173";
 
 	public static function parse($url,$type){
 		$html = static::_cget($url);

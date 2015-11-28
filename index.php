@@ -18,6 +18,7 @@ body{color:#333;font-family:"segoe ui",Arial,sans-serif}#page{width:90%;margin:4
 			<label class="type"><input type="radio" value="normal" name="type" <?php echo isset($_GET['type']) && $_GET['type'] == 'normal' ? ' checked="checked"' : ''?>/>流畅</label>
 			<label class="type"><input type="radio" value="high" name="type" <?php echo isset($_GET['type']) && $_GET['type'] == 'high' ? ' checked="checked"' : ''?>/>高清</label>
 			<label class="type"><input type="radio" value="super" name="type" <?php echo isset($_GET['type']) && $_GET['type'] == 'super' ? ' checked="checked"' : ''?>/>720P</label>
+			<label class="type"><input type="radio" value="hd" name="type" <?php echo isset($_GET['type']) && $_GET['type'] == 'hd' ? ' checked="checked"' : ''?>/>1080P</label>
 			<label class="type"><input type="radio" value="all" name="type" <?php echo isset($_GET['type']) && $_GET['type'] == 'all' || !isset($_GET['type']) ? ' checked="checked"' : ''?>/>全部</label>
 			<label class="type"><input type="submit" id="submit" value="解析"/></label>
 		</form>

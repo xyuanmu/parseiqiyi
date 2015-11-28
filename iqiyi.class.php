@@ -3,8 +3,6 @@ class Iqiyi {
 
 	const USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.69 Safari/537.36";
 	const PROXY = "http://203.195.160.14:80"; //代理ip 端口
-	//const PROXY = "";
-	static private $deadpara = 832;
 	static private $enc_key  = "6967d2088d8843eea0ee38ad1a6f9173";
 
 	public static function parse($url,$type){
@@ -41,6 +39,14 @@ class Iqiyi {
 		if (!is_string($html) || !strlen($html))
 			return false;
 		return $html;
+	}
+
+	private static function mixKey($tvid){
+		$tm  = rand(1000,2000);
+		$enc = md5(self::$enc_key.$tm.$tvid);
+		$arr['tm']  = $tm;
+		$arr['enc'] = $enc;
+		return $arr;
 	}
 
 	private static function calmd($t,$fileId){
@@ -88,8 +94,10 @@ class Iqiyi {
 	//parseFlv 解析网站f4v格式的视频
 	private static function parseFlv($tvid,$vid,$type){
 
+		$key = static::mixKey($tvid);
 		$api_url = "http://cache.video.qiyi.com/vms?key=fvip&src=1702633101b340d8917a69cf8a4b8c7c";
-		$api_url = $api_url."&tvId=".$tvid."&vid=".$vid."&vinfo=1&tm=".self::$deadpara."&enc=".md5(self::$enc_key.self::$deadpara.$tvid);
+		$api_url.= "&tvId=".$tvid."&vid=".$vid."&vinfo=1&tm=".$key['tm']."&enc=".$key['enc']."&um=1";
+		#echo $api_url;
 
 		$video_datas = json_decode(static::_cget($api_url),true);
 		if($video_datas['code']=='A000001')
@@ -128,7 +136,7 @@ class Iqiyi {
 				if($val['bid'] ==  1 && ($type=='all' || $type=='normal')) $urls_data['normal'][] = $final_url;
 				if($val['bid'] ==  2 && ($type=='all' || $type=='high')) $urls_data['high'][] = $final_url;
 				if($val['bid'] ==  4 && ($type=='all' || $type=='super')) $urls_data['SUPER_HIGH'][] = $final_url;
-				if($val['bid'] ==  5 && $type=='all') $urls_data['FULL_HD'][] = $final_url;
+				if($val['bid'] ==  5 && ($type=='all' || $type=='hd')) $urls_data['FULL_HD'][] = $final_url;
 				if($val['bid'] ==  10 && $type=='all') $urls_data['FOUR_K'][] = $final_url;
 			}
 		}
@@ -176,7 +184,9 @@ class Iqiyi {
 				break;
 			}
 			while ($done = curl_multi_info_read($queue)){
-				$results = self::callback_match(curl_multi_getcontent($done['handle']));
+				$data = curl_multi_getcontent($done['handle']);
+				preg_match('#"l":"([^"]+)&src=.*?"#i',$data,$matchs);
+				if($matchs) $results = $matchs[1];
 				$responses[$map[(string)$done['handle']]] = $results;
 				curl_multi_remove_handle($queue, $done['handle']);
 				curl_close($done['handle']);
@@ -189,10 +199,4 @@ class Iqiyi {
 		return $responses;
 	}
 
-	//callback_match 回调获取视频的地址
-	private static function callback_match($data){
-		preg_match('#"l":"([^"]+)&src=.*?"#i',$data,$matchs);
-		if($matchs) $data = $matchs[1];
-		return $data;
-	}
 }

@@ -3,7 +3,7 @@ class Iqiyi {
 
 	const USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.69 Safari/537.36";
 	const PROXY = "http://180.166.112.47:8888"; //代理ip端口，获取国内地址，若服务器在国内可以删掉冒号里的地址
-	static private $enc_key  = "d7184ccc20a84a9d8be798087386b6b8";
+	static private $enc_key  = "6ab6d0280511493ba85594779759d4ed";
 
 	public static function parse($url,$type){
 		$html = static::_cget($url);

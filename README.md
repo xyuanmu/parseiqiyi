@@ -8,3 +8,5 @@
 * PS:爱奇艺的f4v分段视频时间轴有问题，只有[月亮f4v合并器](http://www.xz7.com/dir/80141.html)或[硕鼠合并独立版](http://download.flvcd.com/setup/bigrats_bing_setup.exe)能正常合并，合并时勾选右下角的**快速合并**可以节省时间。
 
 **测试地址，勿滥用：**http://yuanmu.000webhost.cn/iqiyi/
+
+**获取爱奇艺key方法：**https://github.com/xyuanmu/hack-iqiyi

@@ -3,7 +3,7 @@ class Iqiyi {
 
 	const USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.69 Safari/537.36";
 	const PROXY = ""; //代理ip端口
-	static private $enc_key  = "8ed797d224d043e7ac23d95b70227d32";
+	static private $enc_key  = "4a1caba4b4465345366f28da7c117d20";
 
 	public static function parse($url,$type){
 		$html = static::_cget($url);

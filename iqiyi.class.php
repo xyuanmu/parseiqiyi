@@ -5,27 +5,31 @@ class Iqiyi {
 	const PROXY = ""; //代理ip端口
 	static private $enc_key  = "4a1caba4b4465345366f28da7c117d20";
 
-	public static function parse($url,$type){
+	public static function parse($url,$type,$proxy=''){
+		if (self::PROXY || $proxy){
+			$curl_proxy = self::PROXY;
+			if ($proxy) $curl_proxy = $proxy;
+			$proxy = $curl_proxy;
+		}
 		$html = static::_cget($url);
 		$data = $tvids = $vids = $urls_data = array();
-		preg_match('#data-(player|drama)-tvid="([^"]+)"#iU',$html,$tvids);
-		preg_match('#data-(player|drama)-videoid="([^"]+)"#iU',$html,$vids);
-		$vid = $vids[2]?$vids[2]:'';
-		$tvid = $tvids[2]?$tvids[2]:'';
-
+		if ($html){
+			preg_match('#data-(player|drama)-tvid="([^"]+)"#iU',$html,$tvids);
+			preg_match('#data-(player|drama)-videoid="([^"]+)"#iU',$html,$vids);
+			$vid = $vids[2]?$vids[2]:'';
+			$tvid = $tvids[2]?$tvids[2]:'';
+		}
 		if(!empty($vid)&&!empty($tvid)){
-			$data = self::parseFlv($tvid,$vid,$type);
+			$data = self::parseFlv($tvid,$vid,$type,$proxy);
 			return $data;
 		}
-
 	}
 
 	// 通过 curl 获取内容
-	private static function _cget($url = ''){
+	private static function _cget($url=''){
 		if (!$url) return;
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_REFERER, "http://www.baidu.com");
-		if (self::PROXY!='') curl_setopt($ch, CURLOPT_PROXY, self::PROXY);
 		curl_setopt($ch, CURLOPT_USERAGENT, self::USER_AGENT);
 		ob_start();
 		curl_exec($ch);
@@ -92,7 +96,7 @@ class Iqiyi {
 	}
 
 	//parseFlv 解析网站f4v格式的视频
-	private static function parseFlv($tvid,$vid,$type){
+	private static function parseFlv($tvid,$vid,$type,$proxy=''){
 
 		$key = static::mixKey($tvid);
 		$api_url = "http://cache.video.qiyi.com/vms?key=fvip&src=1702633101b340d8917a69cf8a4b8c7c";
@@ -141,19 +145,19 @@ class Iqiyi {
 			}
 		}
 
-		if(!empty($urls_data['fluent'])) $data['极速'] = self::getVideoUrl($urls_data['fluent']);
-		if(!empty($urls_data['normal'])) $data['流畅'] = self::getVideoUrl($urls_data['normal']);
-		if(!empty($urls_data['high'])) $data['高清'] = self::getVideoUrl($urls_data['high']);
-		if(!empty($urls_data['SUPER_HIGH'])) $data['720P'] = self::getVideoUrl($urls_data['SUPER_HIGH']);
-		if(!empty($urls_data['FULL_HD'])) $data['1080P'] = self::getVideoUrl($urls_data['FULL_HD']);
-		if(!empty($urls_data['FOUR_K'])) $data['4K'] = self::getVideoUrl($urls_data['FOUR_K']);
+		if(!empty($urls_data['fluent'])) $data['极速'] = self::getVideoUrl($urls_data['fluent'],$proxy);
+		if(!empty($urls_data['normal'])) $data['流畅'] = self::getVideoUrl($urls_data['normal'],$proxy);
+		if(!empty($urls_data['high'])) $data['高清'] = self::getVideoUrl($urls_data['high'],$proxy);
+		if(!empty($urls_data['SUPER_HIGH'])) $data['720P'] = self::getVideoUrl($urls_data['SUPER_HIGH'],$proxy);
+		if(!empty($urls_data['FULL_HD'])) $data['1080P'] = self::getVideoUrl($urls_data['FULL_HD'],$proxy);
+		if(!empty($urls_data['FOUR_K'])) $data['4K'] = self::getVideoUrl($urls_data['FOUR_K'],$proxy);
 
 		return $data;
 	}
 
 	//返回最终视频地址
-	private static function getVideoUrl($url_data){
-		$data = self::rolling_curl($url_data);
+	private static function getVideoUrl($url_data,$proxy=''){
+		$data = self::rolling_curl($url_data,$proxy);
 		$urls = array();
 		foreach($url_data as $val){
 			//按顺序排列视频 url
@@ -163,13 +167,13 @@ class Iqiyi {
 	}
 
 	//rolling_curl curl并发
-	private static function rolling_curl($urls){
+	private static function rolling_curl($urls,$proxy=''){
 		$queue = curl_multi_init();
 		$map = $responses = array();
 		foreach ($urls as $url){
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $url);
-			if (self::PROXY!='') curl_setopt($ch, CURLOPT_PROXY, self::PROXY);
+			if ($proxy) curl_setopt($ch, CURLOPT_PROXY, $proxy);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -186,7 +190,7 @@ class Iqiyi {
 			while ($done = curl_multi_info_read($queue)){
 				$data = curl_multi_getcontent($done['handle']);
 				preg_match('#"l":"([^"]+)&src=.*?"#i',$data,$matchs);
-				if($matchs) $results = $matchs[1];
+				$results = $matchs ? $matchs[1] : '';
 				$responses[$map[(string)$done['handle']]] = $results;
 				curl_multi_remove_handle($queue, $done['handle']);
 				curl_close($done['handle']);

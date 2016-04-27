@@ -16,8 +16,8 @@ class Iqiyi {
 		if ($html){
 			preg_match('#data-(player|drama)-tvid="([^"]+)"#iU',$html,$tvids);
 			preg_match('#data-(player|drama)-videoid="([^"]+)"#iU',$html,$vids);
-			$vid = $vids[2]?$vids[2]:'';
-			$tvid = $tvids[2]?$tvids[2]:'';
+			$vid = isset($vids[2])?$vids[2]:'';
+			$tvid = isset($tvids[2])?$tvids[2]:'';
 		}
 		if(!empty($vid)&&!empty($tvid)){
 			$data = self::parseFlv($tvid,$vid,$type,$proxy);
@@ -107,7 +107,11 @@ class Iqiyi {
 		if($video_datas['code']=='A000001')
 			return false;
 
-		$vs = $video_datas['data']['vp']['tkl'][0]['vs'];    //.data.vp.tkl[0].vs
+		if (isset($video_datas['data']['vp']['tkl'][0]['vs'])){
+			$vs = $video_datas['data']['vp']['tkl'][0]['vs'];    //.data.vp.tkl[0].vs
+		} else {
+			return 404;
+		}
 
 		$time_url = "http://data.video.qiyi.com/t";
 		$time_datas = json_decode(static::_cget($time_url),true);

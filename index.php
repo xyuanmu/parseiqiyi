@@ -35,7 +35,10 @@ function debug($url,$type,$proxy){
 		if ($type == 'high')  $format = "高清";
 		if ($type == 'super') $format = "720P";
 		if ($type == 'hd')    $format = "1080P";
-		if ($type == 'all'){
+		if ($result == 404){
+			echo "<span>不支持解析VIP视频!</span>";
+		}
+		else if ($type == 'all'){
 			print_r($result);
 		} else {
 			echo "\n标题：" . $result['title'] . "\n";
